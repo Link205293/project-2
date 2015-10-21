@@ -1,0 +1,161 @@
+// Project 2 lets make pool  Garrett Stoddard  
+
+// Globals
+
+String title=  "ELASTIC COLLISIONS  (Project 2)";
+String news=   "Use 'r' key to reset.";
+String author=  "Garrett Stoddard";
+
+
+float left, right, top, bottom;
+float middle;
+
+float cueX,  cueY,  cueDX,  cueDY;
+float yellow1X,  yellow1Y,  yellow1DX,  yellow1DY;
+float blue2X, blue2Y, blue2DX, blue2DY;
+float red3X,  red3Y,  red3DX,  red3DY;
+float friction = .986;
+
+//// SETUP:  size and table
+void setup() {
+  size( 1000, 600 );
+  left=   50;
+  right=  width-50;
+  top=    100;
+  bottom= height-50;
+  middle= left + (right-left) / 2;
+  //
+  reset();
+ }
+ void reset() {
+   cueX=  left + (right-left) / 4;
+   cueY=  top + (bottom-top) / 2;
+   // Random positions.
+   red3X=  random( middle,right );   red3Y=  random( top, bottom );
+   yellow1X=  random( middle,right );   yellow1Y=  random( top, bottom );
+   blue2X=  random( middle,right );   blue2Y=  random( top, bottom );
+   // Random speeds
+   red3DX=  random( 1,3 );   red3DY=  random( 1,3 );
+   yellow1DX=  random( 1,3 );   red3DY=  random( 1,3 );
+   blue2DX=  random( 1,3 );   blue2DY=  random( 1,3 );
+ }
+
+//// NEXT FRAME:  table, bounce off walls, collisions, show all
+void draw() {
+  background( 250,250,200 );
+  rectMode( CORNERS );
+  table( left, top, right, bottom );
+  bounce();
+  collisions();
+  show();
+  messages();
+}
+
+//// SCENE:  draw the table with walls
+void table( float left, float top, float right, float bottom ) {
+  fill( 100, 250, 100 );    // green pool table
+  strokeWeight(20);
+  stroke( 127, 0, 0 );      // Brown walls
+  rect( left-20, top-20, right+20, bottom+20 );
+  stroke(0);
+  strokeWeight(1);
+}
+
+//// ACTION:  bounce off walls, collisions
+void bounce() 
+{
+  red3X += red3DX;  if ( red3X<left || red3X>right ) red3DX *= -1;
+  red3Y += red3DY;  if ( red3Y<top || red3Y>bottom ) red3DY *=  -1;
+  red3DX *= friction;
+  red3DY *= friction;
+
+  yellow1X += yellow1DX;  if ( yellow1X<left || yellow1X>right ) yellow1DX *= -1;
+  yellow1Y += yellow1DY;  if ( yellow1Y<top || yellow1Y>bottom ) yellow1DY *=  -1;
+  yellow1DX *= friction;
+  yellow1DY *= friction;
+  
+  cueX += cueDX;  if ( cueX<left || cueX>right ) cueDX *= -1;
+  cueY += cueDY;  if ( cueY<top || cueY>bottom ) cueDY *=  -1;
+  cueDX *= friction;
+  cueDY *= friction;
+  
+  blue2X += blue2DX;  if ( blue2X<left || blue2X>right ) blue2DX *= -1;
+  blue2Y += blue2DY;  if ( blue2Y<top || blue2Y>bottom ) blue2DY *=  -1;
+  blue2DX *= friction;
+  blue2DY *= friction;
+
+}
+void collisions() 
+{
+  float tmp;
+  // Swap velocities
+  //red and yellow swap
+  if ( dist( red3X,red3Y, yellow1X,yellow1Y ) < 30 ) 
+  {
+    tmp=yellow1DX;  yellow1DX=red3DX;  red3DX=tmp;
+    tmp=yellow1DY;  yellow1DY=red3DY;  red3DY=tmp;
+  }
+  //red and blue swap
+  if ( dist( red3X,red3Y, blue2X,blue2Y ) < 30 ) 
+  {
+    tmp=blue2DX;  blue2DX=red3DX;  red3DX=tmp;
+    tmp=blue2DY;  blue2DY=red3DY;  red3DY=tmp;
+  }
+  //red and cue swap
+  if ( dist( red3X,red3Y, cueX,cueY ) < 30 ) 
+  {
+    tmp=cueDX;  cueDX=red3DX;  red3DX=tmp;
+    tmp=cueDY;  cueDY=red3DY;  red3DY=tmp;
+  }
+  //blue and yellow swap
+  if ( dist( blue2X,blue2Y, yellow1X,yellow1Y ) < 30 ) 
+  {
+    tmp=yellow1DX;  yellow1DX=blue2DX;  blue2DX=tmp;
+    tmp=yellow1DY;  yellow1DY=blue2DY;  blue2DY=tmp;
+  }
+  //cue and yellow swap
+  if ( dist( cueX,cueY, yellow1X,yellow1Y ) < 30 ) 
+  {
+    tmp=yellow1DX;  yellow1DX=cueDX;  cueDX=tmp;
+    tmp=yellow1DY;  yellow1DY=cueDY;  cueDY=tmp;
+  }
+  //blue and cue swap
+  if ( dist( blue2X,blue2Y, cueX,cueY ) < 30 ) 
+  {
+    tmp=cueDX;  cueDX=blue2DX;  blue2DX=tmp;
+    tmp=cueDY;  cueDY=blue2DY;  blue2DY=tmp;
+  }
+  
+}
+
+// drawing th balls on the table
+void show() 
+{
+  fill( 255,0,0 );    ellipse( red3X,red3Y, 30,30 );
+  fill( 255,255,0 );  ellipse( yellow1X,yellow1Y, 30,30 );
+  fill( 0,0,255 );    ellipse( blue2X,blue2Y, 30,30 );
+  fill( 255,255,255 );    ellipse( cueX,cueY, 30,30 );
+}
+//Text on the screen
+void messages() 
+{
+  fill(0);
+  text( title, width/3, 20 );
+  text( news, width/3, 40 );
+  text( author, 10, height-10 );
+}
+
+//keys, clicks
+void keyPressed() 
+{
+  if (key == 'r') 
+  {
+    reset();
+  }
+}
+
+void mousePressed()
+{
+  cueDX = (cueX - mouseX)/7;
+  cueDY = (cueY - mouseY)/7;
+}
