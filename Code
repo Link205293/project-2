@@ -15,6 +15,7 @@ float yellow1X,  yellow1Y,  yellow1DX,  yellow1DY;
 float blue2X, blue2Y, blue2DX, blue2DY;
 float red3X,  red3Y,  red3DX,  red3DY;
 float friction = .986;
+float button1X = 900, button1Y = 50, button1q = 50, button1p = 20;
 
 //// SETUP:  size and table
 void setup() {
@@ -45,6 +46,7 @@ void draw() {
   background( 250,250,200 );
   rectMode( CORNERS );
   table( left, top, right, bottom );
+  drawButton(button1X, button1Y, button1q, button1p, 0, 0, 0);
   bounce();
   collisions();
   show();
@@ -85,6 +87,8 @@ void bounce()
   blue2DY *= friction;
 
 }
+
+// When things collide
 void collisions() 
 {
   float tmp;
@@ -128,6 +132,30 @@ void collisions()
   
 }
 
+//drawing the button
+void drawButton(float x, float y, float q, float p, float rr, float rg, float rb)
+{
+  // color of the rectangle
+  fill(rr, rg, rb);
+  //Changes the mode of the rectangle to the center
+  rectMode(CENTER);
+  rect(x,y,q,p);
+}
+
+//hitting the button
+boolean hit( float x1, float y1, float x2, float y2, float w, float h ) 
+{
+  boolean result;
+
+  if ( abs(x1-x2) < w && abs(y1-y2)<h ) {
+    result=  true;
+  } else {
+    result=false;
+  }
+
+  return result;
+}
+
 // drawing th balls on the table
 void show() 
 {
@@ -156,6 +184,13 @@ void keyPressed()
 
 void mousePressed()
 {
+  if(mouseY > 100)
+  {
   cueDX = (cueX - mouseX)/7;
   cueDY = (cueY - mouseY)/7;
+  }
+  if ( hit( mouseX, mouseY,  button1X, button1Y, button1q, button1p))
+  {
+    reset();
+  }
 }
